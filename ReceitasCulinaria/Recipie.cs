@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ReceitasCulinaria
 {
@@ -11,6 +12,6 @@ namespace ReceitasCulinaria
         public string Categoria { get; set; }
         public int Pessoas { get; set; }
         public string Descricao { get; set; }
-        public string Ingredientes { get; set; }
+        public List<Ingridients> Ingredientes { get; set; }
     }
 }
