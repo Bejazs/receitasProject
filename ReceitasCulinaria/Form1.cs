@@ -50,26 +50,6 @@ namespace ReceitasCulinaria
             ingridients.Add(new Ingridients { Nome = "", Quanitidade = 0, Unidade = "" });
         }
 
-        private void Filtros_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void recipiesTable_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void recipiesTable_RowsAdded(object sender, DataGridViewRowEventArgs e)
-        {
-
-        }
-
         private void save_Click(object sender, EventArgs e)
         {
             var item = new Recipie
@@ -97,16 +77,6 @@ namespace ReceitasCulinaria
             printIntoFile(recipies);
 
             CleanSelectedPanel();
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void recipiesTable_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
 
         private void recipiesTable_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e) => SelectItem(e.RowIndex);
