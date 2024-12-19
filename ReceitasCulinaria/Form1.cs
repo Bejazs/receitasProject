@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 
@@ -12,16 +13,14 @@ namespace ReceitasCulinaria
     public partial class Form1 : Form
     {
 
+        public const string FILENAME = "./saveRecipies.txt";
+
         BindingList<Recipie> recipies;
         BindingList<Recipie> recipiesFiltered;
         BindingList<Ingridients> ingridients;
         BindingList<Ingridients> ingridientsDetails;
 
-        Guid? selectedId;
-
-        FileStream fileStream;
-        StreamReader reader;
-        StreamWriter writer;
+        Guid? selectedId;        
 
         public Form1()
         {
@@ -30,11 +29,8 @@ namespace ReceitasCulinaria
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //Open Streams for reading and writting
-            fileStream = new FileStream("./saveRecipies.txt", FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            reader = new StreamReader(fileStream);
-            writer = new StreamWriter(fileStream);
-            var content = JsonConvert.DeserializeObject<List<Recipie>>(reader.ReadToEnd());
+            
+            var content = JsonConvert.DeserializeObject<List<Recipie>>(readFromFile());
 
             // prepare data biding and tables
             if (content != null) recipies = new BindingList<Recipie>(content);
@@ -73,8 +69,6 @@ namespace ReceitasCulinaria
             {
                 recipies.Add(item);
             }
-
-            printIntoFile(recipies);
 
             CleanSelectedPanel();
         }
@@ -129,12 +123,7 @@ namespace ReceitasCulinaria
             selectedId = null;
         }
 
-        public void printIntoFile(IEnumerable<Recipie> recipies)
-        {
-            writer.Write(JsonConvert.SerializeObject(recipies));
-            writer.Flush();
 
-        }
 
         private void Delete_Click(object sender, EventArgs e)
         {
@@ -145,19 +134,7 @@ namespace ReceitasCulinaria
             }
         }
 
-        private void OnClose(object sender, FormClosingEventArgs e)
-        {
-
-            writer.Close();
-            writer.Dispose();
-
-            reader.Close();
-            reader.Dispose();
-
-            fileStream.Close();
-            fileStream.Dispose();
-
-        }
+        private void OnClose(object sender, FormClosingEventArgs e) => printIntoFile();
 
         private void Filter_Click(object sender, EventArgs e)
         {
@@ -170,6 +147,32 @@ namespace ReceitasCulinaria
             recipiesFiltered = new BindingList<Recipie>(filtered);
 
             recipiesTable.DataSource = recipiesFiltered;
+        }
+
+
+        public void printIntoFile()
+        {
+            FileStream fileStream = new FileStream(FILENAME, FileMode.OpenOrCreate, FileAccess.Write);
+            StreamWriter writer = new StreamWriter(fileStream);
+            
+            var jsonContent = JsonConvert.SerializeObject(recipies);
+            writer.Write(jsonContent);
+
+            writer.Close();
+            fileStream.Close();
+        }
+
+
+        public string readFromFile()
+        {
+            FileStream fileStream = new FileStream(FILENAME, FileMode.OpenOrCreate, FileAccess.Read);
+            StreamReader reader = new StreamReader(fileStream);
+            string content = reader.ReadToEnd();
+
+            reader.Close();
+            fileStream.Close();
+
+            return content;
         }
 
         private void CleanFilters_Click(object sender, EventArgs e)
