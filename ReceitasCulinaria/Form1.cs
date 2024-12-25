@@ -43,15 +43,29 @@ namespace ReceitasCulinaria
 
             //Custom properties and need options
             recipiesTable.Columns["Id"].Visible = false;
-            ingridients.Add(new Ingridients { Nome = "", Quanitidade = 0, Unidade = "" });
+            recipiesTable.Columns["Descricao"].Visible = false;
+            ingridients.Add(new Ingridients { Nome = "", Quanitidade = 0, Unidade = "g" });
         }
 
         private void save_Click(object sender, EventArgs e)
         {
+
+            if (string.IsNullOrEmpty(NomeBox.Text.Trim()))
+            {
+                MessageBox.Show("Receita tem de conter um nome!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (selectedId==null && recipies.ToList().Where(x => x.Nome.ToUpper().Equals(NomeBox.Text.ToUpper().Trim())).FirstOrDefault() != null)
+            {
+                MessageBox.Show("Já existe uma receita com o mesmo nome!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             var item = new Recipie
             {
                 Id = Guid.NewGuid(),
-                Nome = NomeBox.Text,
+                Nome = NomeBox.Text.Trim(),
                 Tempo = string.IsNullOrEmpty(timeBox.Text) ? 0 : int.Parse(timeBox.Text),
                 Dificuldade = dificultyBox.Text,
                 Pessoas = string.IsNullOrEmpty(personsBox.Text) ? 0 : int.Parse(personsBox.Text),
@@ -69,6 +83,8 @@ namespace ReceitasCulinaria
             {
                 recipies.Add(item);
             }
+
+            MessageBox.Show("Receita adicionada com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             CleanSelectedPanel();
         }
@@ -100,6 +116,7 @@ namespace ReceitasCulinaria
                 //new binding
                 ingridientsDetails = new BindingList<Ingridients>(item.Ingredientes);
                 detailsIngridientsTable.DataSource = ingridientsDetails;
+                descriptionDetailsBox.Text = item.Descricao;
 
 
             }
@@ -120,6 +137,7 @@ namespace ReceitasCulinaria
             //details
             ingridientsDetails = null;
             detailsIngridientsTable.DataSource = null;
+            descriptionDetailsBox.Text = null;
             selectedId = null;
         }
 
@@ -130,6 +148,7 @@ namespace ReceitasCulinaria
             if (selectedId != null)
             {
                 recipies.Remove(recipies.Where(x => x.Id == selectedId).FirstOrDefault());
+                MessageBox.Show("Receita removida com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 CleanSelectedPanel();
             }
         }
@@ -141,7 +160,7 @@ namespace ReceitasCulinaria
 
             var filtered = recipies.ToList().Where(x => !string.IsNullOrEmpty(FilterCategoryBox.Text) ? x.Categoria.Equals(FilterCategoryBox.Text) : true &&
             !string.IsNullOrEmpty(FilterTimeBox.Text) && int.Parse(FilterTimeBox.Text) != 0 ? x.Tempo.Equals(int.Parse(FilterTimeBox.Text)) : true &&
-            !string.IsNullOrEmpty(FilterDificultyBox.Text) && int.Parse(FilterDificultyBox.Text) != 0 ? x.Dificuldade.Equals(int.Parse(FilterDificultyBox.Text)) : true
+            !string.IsNullOrEmpty(FilterDificultyBox.Text) ? x.Dificuldade.Equals(FilterDificultyBox.Text) : true
             ).ToList();
 
             recipiesFiltered = new BindingList<Recipie>(filtered);
@@ -180,5 +199,14 @@ namespace ReceitasCulinaria
             recipiesFiltered = null;
             recipiesTable.DataSource = recipies;
         }
+
+
+        //By default, on adding a new row, the default uint is "g"
+        private void OnRowAdd(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            if (ingridients.Count>0) 
+                ingridients.LastOrDefault().Unidade="g";
+        }
+
     }
 }
