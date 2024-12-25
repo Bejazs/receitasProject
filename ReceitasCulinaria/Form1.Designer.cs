@@ -1,6 +1,6 @@
 ﻿namespace ReceitasCulinaria
 {
-    partial class Form1
+    partial class RecipiesForm
     {
         /// <summary>
         /// Required designer variable.
@@ -536,7 +536,7 @@
             this.Name = "Form1";
             this.Text = "Receitas Form";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClose);
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Load += new System.EventHandler(this.RecipiesForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.recipiesTable)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.personsBox)).EndInit();

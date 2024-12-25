@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace ReceitasCulinaria
 {
-    public partial class Form1 : Form
+    public partial class RecipiesForm : Form
     {
 
         public const string FILENAME = "./saveRecipies.txt";
@@ -22,12 +22,13 @@ namespace ReceitasCulinaria
 
         Guid? selectedId;        
 
-        public Form1()
+        public RecipiesForm()
         {
             InitializeComponent();
         }
-
-        private void Form1_Load(object sender, EventArgs e)
+         
+        //On Loading project
+        private void RecipiesForm_Load(object sender, EventArgs e)
         {
             
             var content = JsonConvert.DeserializeObject<List<Recipie>>(readFromFile());
@@ -47,6 +48,7 @@ namespace ReceitasCulinaria
             ingridients.Add(new Ingridients { Nome = "", Quanitidade = 0, Unidade = "g" });
         }
 
+        //On Save of a recipie
         private void save_Click(object sender, EventArgs e)
         {
 
@@ -89,10 +91,13 @@ namespace ReceitasCulinaria
             CleanSelectedPanel();
         }
 
+        //On cell click
         private void recipiesTable_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e) => SelectItem(e.RowIndex);
-
+        
+        //On cell click
         private void recipiesTable_RowHeaderMouseDoubleClick(object sender, DataGridViewCellEventArgs e) => SelectItem(e.RowIndex);
 
+        //Selecting the item
         public void SelectItem(int rowIndex)
         {
             var id = (Guid)recipiesTable.Rows[rowIndex].Cells[0].Value;
@@ -101,6 +106,7 @@ namespace ReceitasCulinaria
 
         }
 
+        //Set selected item properties
         public void setSelectedPanel(Recipie item)
         {
             if (item != null)
@@ -122,8 +128,10 @@ namespace ReceitasCulinaria
             }
         }
 
+        //Clear selected item
         private void ClearSelected_Click(object sender, EventArgs e) => CleanSelectedPanel();
 
+        //Clear selected item properites
         public void CleanSelectedPanel()
         {
             NomeBox.Text = "";
@@ -141,8 +149,7 @@ namespace ReceitasCulinaria
             selectedId = null;
         }
 
-
-
+        //Delete item
         private void Delete_Click(object sender, EventArgs e)
         {
             if (selectedId != null)
@@ -153,8 +160,11 @@ namespace ReceitasCulinaria
             }
         }
 
+        //OnClosing of the form, save the recipies into a file
         private void OnClose(object sender, FormClosingEventArgs e) => printIntoFile();
 
+
+        //Filter funciontallity
         private void Filter_Click(object sender, EventArgs e)
         {
 
@@ -168,7 +178,7 @@ namespace ReceitasCulinaria
             recipiesTable.DataSource = recipiesFiltered;
         }
 
-
+        //Save into a file
         public void printIntoFile()
         {
             FileStream fileStream = new FileStream(FILENAME, FileMode.OpenOrCreate, FileAccess.Write);
@@ -181,7 +191,7 @@ namespace ReceitasCulinaria
             fileStream.Close();
         }
 
-
+        //Read from a file
         public string readFromFile()
         {
             FileStream fileStream = new FileStream(FILENAME, FileMode.OpenOrCreate, FileAccess.Read);
@@ -194,6 +204,7 @@ namespace ReceitasCulinaria
             return content;
         }
 
+        //Clean filters
         private void CleanFilters_Click(object sender, EventArgs e)
         {
             recipiesFiltered = null;
